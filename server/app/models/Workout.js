@@ -13,7 +13,6 @@ const Workout = new Schema(
         },
         level: {
             type: Number,
-            required: true,
         },
         likes: {
             type: Number,
@@ -40,7 +39,7 @@ const Workout = new Schema(
                 sets: {
                     type: Number,
                 },
-                Rest: {
+                rest: {
                     type: Number,
                 },
                 order: {

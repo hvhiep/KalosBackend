@@ -27,7 +27,7 @@ const Exercise = new Schema(
         ],
         equipments: [
             {
-                type: Number,
+                type: String,
             },
         ],
     },

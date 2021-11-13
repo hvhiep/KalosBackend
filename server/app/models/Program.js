@@ -9,9 +9,6 @@ const Program = new Schema(
             required: true,
             trim: true,
         },
-        order: {
-            type: Number,
-        },
         level: {
             type: Number,
             required: true,
