@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Video = require('../models/Video');
+const FavoriteVideo = require('../models/FavoriteVideo');
 const bcrypt = require('bcrypt');
 
 const userController = {
@@ -105,6 +107,71 @@ const userController = {
                 user,
                 token,
             });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    favoriteVideo: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idVideo } = req.body;
+            const video = await FavoriteVideo.find({ _id: idVideo });
+            if (!video) res.status(400).json({ msg: 'Video not found' });
+
+            let favorite = await FavoriteVideo.findOne({
+                user: user._id,
+                video: idVideo,
+            });
+
+            if (favorite) {
+                await favorite.delete();
+                return res.json({ msg: "Don't like" });
+            } else {
+                favorite = new FavoriteVideo();
+                favorite.user = user._id;
+                favorite.video = idVideo;
+                await favorite.save();
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteVideo: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const favorites = await FavoriteVideo.find({}).populate({
+                path: 'video',
+                model: 'Video',
+            });
+            return res.json({ favorites });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteVideoById: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idVideo } = req.params;
+            const video = await Video.findById(idVideo);
+            if (!video) {
+                return res.status(400).json({ msg: 'Video not found' });
+            } else {
+                const favorite = await FavoriteVideo.findOne({
+                    user: user._id,
+                    video: idVideo,
+                }).populate({
+                    path: 'video',
+                    model: 'Video',
+                });
+                return res.json({ favorite });
+            }
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
