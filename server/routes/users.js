@@ -14,7 +14,7 @@ router.get(
     auth,
     userController.getFavoriteVideoById
 );
-router.get('/me/favorite/videos', auth, userController.getFavoriteExercise);
+router.get('/me/favorite/videos', auth, userController.getFavoriteVideo);
 
 router.post('/me/favorite/exercises', auth, userController.favoriteExercise);
 router.get(

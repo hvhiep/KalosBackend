@@ -20,6 +20,12 @@ const Exercise = new Schema(
                 type: Number,
             },
         ],
+        likes: {
+            type: Number,
+        },
+        liked: {
+            type: Boolean,
+        },
         muscleGroups: [
             {
                 type: Number,
