@@ -1,6 +1,12 @@
 const User = require('../models/User');
 const Video = require('../models/Video');
 const FavoriteVideo = require('../models/FavoriteVideo');
+const Exercise = require('../models/Exercise');
+const FavoriteExercise = require('../models/FavoriteExercise');
+const Workout = require('../models/Workout');
+const FavoriteWorkout = require('../models/FavoriteWorkout');
+const Program = require('../models/Program');
+const FavoriteProgram = require('../models/FavoriteProgram');
 const bcrypt = require('bcrypt');
 
 const userController = {
@@ -111,13 +117,14 @@ const userController = {
             return res.status(500).json({ msg: err.message });
         }
     },
+    // favorite video
     favoriteVideo: async (req, res) => {
         try {
             const user = req.user;
             if (!user) return res.status(400).json({ msg: 'User not found' });
 
             const { idVideo } = req.body;
-            const video = await FavoriteVideo.find({ _id: idVideo });
+            const video = await Video.find({ _id: idVideo });
             if (!video) res.status(400).json({ msg: 'Video not found' });
 
             let favorite = await FavoriteVideo.findOne({
@@ -169,6 +176,204 @@ const userController = {
                 }).populate({
                     path: 'video',
                     model: 'Video',
+                });
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    // favorite exercise
+    favoriteExercise: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idExercise } = req.body;
+            const exercise = await Exercise.find({ _id: idExercise });
+            if (!exercise) res.status(400).json({ msg: 'Exercise not found' });
+
+            let favorite = await FavoriteExercise.findOne({
+                user: user._id,
+                exercise: idExercise,
+            });
+
+            if (favorite) {
+                await favorite.delete();
+                return res.json({ msg: "Don't like" });
+            } else {
+                favorite = new FavoriteExercise();
+                favorite.user = user._id;
+                favorite.exercise = idExercise;
+                await favorite.save();
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteExercise: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const favorites = await FavoriteExercise.find({}).populate({
+                path: 'exercise',
+                model: 'Exercise',
+            });
+            return res.json({ favorites });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteExerciseById: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idExercise } = req.params;
+            const exercise = await Exercise.findById(idExercise);
+            if (!exercise) {
+                return res.status(400).json({ msg: 'Exercise not found' });
+            } else {
+                const favorite = await FavoriteExercise.findOne({
+                    user: user._id,
+                    exercise: idExercise,
+                }).populate({
+                    path: 'exercise',
+                    model: 'Exercise',
+                });
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    // favorite workout
+    favoriteWorkout: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idWorkout } = req.body;
+            const workout = await Workout.find({ _id: idWorkout });
+            if (!workout) res.status(400).json({ msg: 'Workout not found' });
+
+            let favorite = await FavoriteWorkout.findOne({
+                user: user._id,
+                workout: idWorkout,
+            });
+
+            if (favorite) {
+                await favorite.delete();
+                return res.json({ msg: "Don't like" });
+            } else {
+                favorite = new FavoriteWorkout();
+                favorite.user = user._id;
+                favorite.workout = idWorkout;
+                await favorite.save();
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteWorkout: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const favorites = await FavoriteWorkout.find({}).populate({
+                path: 'workout',
+                model: 'Workout',
+            });
+            return res.json({ favorites });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteWorkoutById: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idWorkout } = req.params;
+            const workout = await Workout.findById(idWorkout);
+            if (!workout) {
+                return res.status(400).json({ msg: 'Workout not found' });
+            } else {
+                const favorite = await FavoriteWorkout.findOne({
+                    user: user._id,
+                    workout: idWorkout,
+                }).populate({
+                    path: 'workout',
+                    model: 'Workout',
+                });
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    // favorite program
+    favoriteProgram: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idProgram } = req.body;
+            const program = await Program.find({ _id: idProgram });
+            if (!program) res.status(400).json({ msg: 'Program not found' });
+
+            let favorite = await FavoriteProgram.findOne({
+                user: user._id,
+                program: idProgram,
+            });
+
+            if (favorite) {
+                await favorite.delete();
+                return res.json({ msg: "Don't like" });
+            } else {
+                favorite = new FavoriteProgram();
+                favorite.user = user._id;
+                favorite.program = idProgram;
+                await favorite.save();
+                return res.json({ favorite });
+            }
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteProgram: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const favorites = await FavoriteProgram.find({}).populate({
+                path: 'program',
+                model: 'Program',
+            });
+            return res.json({ favorites });
+        } catch (err) {
+            return res.status(500).json({ msg: err.message });
+        }
+    },
+    getFavoriteProgramById: async (req, res) => {
+        try {
+            const user = req.user;
+            if (!user) return res.status(400).json({ msg: 'User not found' });
+
+            const { idProgram } = req.params;
+            const program = await Program.findById(idProgram);
+            if (!program) {
+                return res.status(400).json({ msg: 'Program not found' });
+            } else {
+                const favorite = await FavoriteProgram.findOne({
+                    user: user._id,
+                    program: idProgram,
+                }).populate({
+                    path: 'program',
+                    model: 'Program',
                 });
                 return res.json({ favorite });
             }
