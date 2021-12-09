@@ -66,7 +66,22 @@ const userController = {
     },
     register: async (req, res) => {
         try {
-            const { name, username, password } = req.body;
+            const {
+                name,
+                username,
+                password,
+                level,
+                height,
+                weight,
+                goals,
+                gender,
+                pullUp,
+                pushUp,
+                squats,
+                dips,
+            } = req.body;
+
+            let today = new Date();
 
             let user = await User.findOne({ username });
 
@@ -75,11 +90,29 @@ const userController = {
                     .status(400)
                     .json({ msg: 'This email or username is exist' });
 
-            const newUser = new User({
-                name,
-                username,
-                password,
-            });
+            const newUser = new User();
+
+            newUser.name = name;
+            newUser.password = password;
+            newUser.username = username;
+            newUser.information = {
+                level: level,
+                gender: gender,
+                goals: goals,
+                performance: {
+                    pullUp: pullUp,
+                    pushUp: pushUp,
+                    squats: squats,
+                    dips: dips,
+                },
+                height: height,
+                weight: [
+                    {
+                        value: weight,
+                        time: today,
+                    },
+                ],
+            };
 
             await newUser.save();
 

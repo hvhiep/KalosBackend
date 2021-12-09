@@ -22,6 +22,31 @@ const User = new Schema(
             trim: true,
         },
         information: {
+            level: {
+                type: Number,
+            },
+            gender: {
+                type: Number,
+            },
+            goals: [
+                {
+                    type: Number,
+                },
+            ],
+            performance: {
+                pullUp: {
+                    type: Number,
+                },
+                pushUp: {
+                    type: Number,
+                },
+                squats: {
+                    type: Number,
+                },
+                dips: {
+                    type: Number,
+                },
+            },
             height: {
                 type: Number,
             },
