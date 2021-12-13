@@ -77,14 +77,14 @@ const workoutController = {
             const user = req.user;
             if (!user) return res.status(400).json({ msg: 'User not found' });
 
-            let submit = await Submit.findOne({
-                user: user._id,
-                workout: idWorkout,
-            });
+            // let submit = await Submit.findOne({
+            //     user: user._id,
+            //     workout: idWorkout,
+            // });
 
-            if (submit) return res.status(400).json({ msg: 'Submit exist' });
+            // if (submit) return res.status(400).json({ msg: 'Submit exist' });
 
-            submit = new Submit();
+            let submit = new Submit();
             submit.user = user._id;
             submit.workout = idWorkout;
             submit.duration = duration;
@@ -162,17 +162,30 @@ const workoutController = {
 
                     await progress.save();
                 } else {
-                    progress.submitted = progress.submitted + 1;
-                    progress.value = progress.submitted / progress.maxWorkout;
+                    let newSubmitted = progress.submitted;
+                    let newValue = progress.value;
+                    // progress.submitted = progress.submitted + 1;
+                    // progress.value = progress.submitted / progress.maxWorkout;
                     let weeks = progress.weeks;
                     weeks.forEach((week) => {
                         if (week.order == orderWeek) {
-                            week.submitted = week.submitted + 1;
-                            week.value = week.submitted / week.maxWorkout;
-                            week.workouts.push(idWorkout);
+                            if (
+                                week.workouts.find(
+                                    (item) => item == idWorkout
+                                ) == undefined
+                            ) {
+                                week.submitted = week.submitted + 1;
+                                week.value = week.submitted / week.maxWorkout;
+                                week.workouts.push(idWorkout);
+                                newSubmitted = progress.submitted + 1;
+                                newValue =
+                                    progress.submitted / progress.maxWorkout;
+                            }
                         }
                     });
                     progress.weeks = weeks;
+                    progress.submitted = newSubmitted;
+                    progress.value = newValue;
 
                     await progress.save();
                 }
