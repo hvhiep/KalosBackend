@@ -12,7 +12,13 @@ const Progress = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'Program',
         },
-        summary: {
+        value: {
+            type: Number,
+        },
+        submitted: {
+            type: Number,
+        },
+        maxWorkout: {
             type: Number,
         },
         weeks: [
@@ -23,6 +29,17 @@ const Progress = new Schema(
                 value: {
                     type: Number,
                 },
+                submitted: {
+                    type: Number,
+                },
+                maxWorkout: {
+                    type: Number,
+                },
+                workouts: [
+                    {
+                        type: String,
+                    },
+                ],
             },
         ],
     },
