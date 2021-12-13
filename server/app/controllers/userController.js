@@ -49,12 +49,27 @@ const userController = {
 
             if (weight) {
                 let today = new Date();
-                let weightArr = user.information.weight;
-                weightArr.push({
-                    value: weight,
-                    time: today,
-                });
-                user.information.weight = weightArr;
+
+                let updatedDate =
+                    user.information.weight[user.information.weight.length - 1]
+                        .time;
+
+                if (
+                    today.getDate() == updatedDate.getDate() &&
+                    today.getMonth() == updatedDate.getMonth() &&
+                    today.getFullYear() == updatedDate.getFullYear()
+                ) {
+                    let weightArr = user.information.weight;
+                    weightArr[weightArr.length - 1].value = weight;
+                    user.information.weight = weightArr;
+                } else {
+                    let weightArr = user.information.weight;
+                    weightArr.push({
+                        value: weight,
+                        time: today,
+                    });
+                    user.information.weight = weightArr;
+                }
             }
 
             await user.save();

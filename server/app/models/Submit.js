@@ -12,11 +12,8 @@ const Submit = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'Workout',
         },
-        start: {
-            type: Date,
-        },
-        end: {
-            type: Date,
+        duration: {
+            type: Number,
         },
     },
     { timestamps: true, collection: 'Submits' }

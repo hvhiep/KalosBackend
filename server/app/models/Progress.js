@@ -17,7 +17,12 @@ const Progress = new Schema(
         },
         weeks: [
             {
-                type: Number,
+                order: {
+                    type: Number,
+                },
+                value: {
+                    type: Number,
+                },
             },
         ],
     },
