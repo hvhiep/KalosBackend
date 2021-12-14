@@ -1,4 +1,5 @@
 const Exercise = require('../models/Exercise');
+const FavoriteExercise = require('../models/FavoriteExercise');
 
 const exerciseController = {
     getAll: async (req, res) => {
@@ -7,6 +8,7 @@ const exerciseController = {
             let { search } = req.body;
 
             let exercises = await Exercise.find({});
+            const favoriteExercises = await FavoriteExercise.find({});
 
             if (level) {
                 exercises = exercises.filter((item) => {
@@ -44,6 +46,27 @@ const exerciseController = {
                     return removeVietnameseTones(item.name).includes(search);
                 });
             }
+
+            const user = req.user;
+            if (user) {
+                exercises.forEach((exercise) => {
+                    let favorite = favoriteExercises.find(
+                        (item) =>
+                            item.exercise.equals(exercise._id) &&
+                            item.user.equals(user._id)
+                    );
+                    if (favorite) exercise.liked = true;
+                    else exercise.liked = false;
+                });
+            }
+
+            exercises.forEach((exercise) => {
+                let favorites = favoriteExercises.filter((item) =>
+                    item.exercise.equals(exercise._id)
+                );
+                let count = favorites.length;
+                exercise.likes = count;
+            });
 
             return res.json({ exercises });
         } catch (err) {
