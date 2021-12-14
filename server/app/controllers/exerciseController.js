@@ -76,7 +76,25 @@ const exerciseController = {
     getById: async (req, res) => {
         try {
             const { id } = req.params;
-            const exercise = await Exercise.find({ _id: id });
+            const exercise = await Exercise.findOne({ _id: id });
+
+            const favoriteExercises = await FavoriteExercise.find({});
+            let favorites = favoriteExercises.filter((item) =>
+                item.exercise.equals(exercise._id)
+            );
+            let count = favorites.length;
+            exercise.likes = count;
+
+            const user = req.user;
+            if (user) {
+                let favorite = FavoriteExercise.find(
+                    (item) =>
+                        item.exercise.equals(exercise._id) &&
+                        item.user.equals(user._id)
+                );
+                if (favorite) exercise.liked = true;
+                else exercise.liked = false;
+            }
 
             return res.json({ exercise });
         } catch (err) {
