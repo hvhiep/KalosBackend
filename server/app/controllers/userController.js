@@ -199,7 +199,9 @@ const userController = {
             const user = req.user;
             if (!user) return res.status(400).json({ msg: 'User not found' });
 
-            const favorites = await FavoriteVideo.find({}).populate({
+            const favorites = await FavoriteVideo.find({
+                user: user._id,
+            }).populate({
                 path: 'video',
                 model: 'Video',
             });
@@ -265,7 +267,9 @@ const userController = {
             const user = req.user;
             if (!user) return res.status(400).json({ msg: 'User not found' });
 
-            const favorites = await FavoriteExercise.find({}).populate({
+            const favorites = await FavoriteExercise.find({
+                user: user._id,
+            }).populate({
                 path: 'exercise',
                 model: 'Exercise',
             });
@@ -331,7 +335,9 @@ const userController = {
             const user = req.user;
             if (!user) return res.status(400).json({ msg: 'User not found' });
 
-            const favorites = await FavoriteWorkout.find({}).populate({
+            const favorites = await FavoriteWorkout.find({
+                user: user._id,
+            }).populate({
                 path: 'workout',
                 model: 'Workout',
             });
@@ -397,7 +403,9 @@ const userController = {
             const user = req.user;
             if (!user) return res.status(400).json({ msg: 'User not found' });
 
-            const favorites = await FavoriteProgram.find({}).populate({
+            const favorites = await FavoriteProgram.find({
+                user: user._id,
+            }).populate({
                 path: 'program',
                 model: 'Program',
             });
