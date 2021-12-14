@@ -4,6 +4,10 @@ const ObjectId = Schema.ObjectId;
 
 const Workout = new Schema(
     {
+        isFree: {
+            type: Boolean,
+            default: false,
+        },
         name: {
             type: String,
             required: true,
@@ -24,6 +28,11 @@ const Workout = new Schema(
             type: Boolean,
         },
         muscleGroups: [
+            {
+                type: Number,
+            },
+        ],
+        tags: [
             {
                 type: Number,
             },

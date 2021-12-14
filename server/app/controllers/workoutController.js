@@ -7,7 +7,7 @@ const FavoriteWorkout = require('../models/FavoriteWorkout');
 const workoutController = {
     getAll: async (req, res) => {
         try {
-            const workouts = await Workout.find({}).populate({
+            let workouts = await Workout.find({}).populate({
                 path: 'rounds',
                 populate: [
                     {
@@ -55,6 +55,11 @@ const workoutController = {
                 let count = favorites.length;
                 workout.likes = count;
             });
+
+            const { free } = req.query;
+            if (free && free == 1) {
+                workouts = workouts.filter((item) => item.isFree == true);
+            }
 
             return res.json({ workouts });
         } catch (err) {
