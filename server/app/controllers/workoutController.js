@@ -2,6 +2,7 @@ const Workout = require('../models/Workout');
 const Program = require('../models/Program');
 const Progress = require('../models/Progress');
 const Submit = require('../models/Submit');
+const FavoriteWorkout = require('../models/FavoriteWorkout');
 
 const workoutController = {
     getAll: async (req, res) => {
@@ -22,6 +23,39 @@ const workoutController = {
                 ],
             });
 
+            const favoriteWorkouts = await FavoriteWorkout.find({});
+            const submits = await Submit.find({});
+            const user = req.user;
+            if (user) {
+                workouts.forEach((workout) => {
+                    let favorite = favoriteWorkouts.find(
+                        (item) =>
+                            item.workout.equals(workout._id) &&
+                            item.user.equals(user._id)
+                    );
+                    if (favorite) workout.liked = true;
+                    else workout.liked = false;
+                });
+
+                workouts.forEach((workout) => {
+                    let submit = submits.find(
+                        (item) =>
+                            item.workout.equals(workout._id) &&
+                            item.user.equals(user._id)
+                    );
+                    if (submit) workout.completed = true;
+                    else workout.completed = false;
+                });
+            }
+
+            workouts.forEach((workout) => {
+                let favorites = favoriteWorkouts.filter((item) =>
+                    item.workout.equals(workout._id)
+                );
+                let count = favorites.length;
+                workout.likes = count;
+            });
+
             return res.json({ workouts });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
@@ -30,7 +64,7 @@ const workoutController = {
     getById: async (req, res) => {
         try {
             const { id } = req.params;
-            const workout = await Workout.find({ _id: id }).populate({
+            const workout = await Workout.findOne({ _id: id }).populate({
                 path: 'rounds',
                 populate: [
                     {
@@ -45,6 +79,33 @@ const workoutController = {
                     },
                 ],
             });
+
+            const favoriteWorkouts = await FavoriteWorkout.find({});
+            let favorites = favoriteWorkouts.filter((item) =>
+                item.workout.equals(workout._id)
+            );
+            let count = favorites.length;
+            workout.likes = count;
+
+            const submits = await Submit.find({});
+            const user = req.user;
+            if (user) {
+                let favorite = favoriteWorkouts.find(
+                    (item) =>
+                        item.workout.equals(workout._id) &&
+                        item.user.equals(user._id)
+                );
+                if (favorite) workout.liked = true;
+                else workout.liked = false;
+
+                let submit = submits.find(
+                    (item) =>
+                        item.workout.equals(workout._id) &&
+                        item.user.equals(user._id)
+                );
+                if (submit) workout.completed = true;
+                else workout.completed = false;
+            }
 
             return res.json({ workout });
         } catch (err) {
