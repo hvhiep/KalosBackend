@@ -1,5 +1,6 @@
 const Program = require('../models/Program');
 const Progress = require('../models/Progress');
+const FavoriteProgram = require('../models/FavoriteProgram');
 
 const programController = {
     getAll: async (req, res) => {
@@ -15,6 +16,46 @@ const programController = {
                 ],
             });
 
+            const favoritePrograms = await FavoriteProgram.find({});
+            const progresses = await Progress.find({});
+            const user = req.user;
+            if (user) {
+                programs.forEach((program) => {
+                    let favorite = favoritePrograms.find(
+                        (item) =>
+                            item.program.equals(program._id) &&
+                            item.user.equals(user._id)
+                    );
+                    if (favorite) program.liked = true;
+                    else program.liked = false;
+
+                    let progress = progresses.find(
+                        (item) =>
+                            item.program.equals(program._id) &&
+                            item.user.equals(user._id)
+                    );
+                    console.log(progress);
+                    if (progress) {
+                        program.progress = progress.value;
+                        program.weeks = program.weeks.map((item) => {
+                            let value = progress.weeks.find(
+                                (tmp) => tmp.order == item.order
+                            ).value;
+                            item.progress = value;
+                            return item;
+                        });
+                    }
+                });
+            }
+
+            programs.forEach((program) => {
+                let favorites = favoritePrograms.filter((item) =>
+                    item.program.equals(program._id)
+                );
+                let count = favorites.length;
+                program.likes = count;
+            });
+
             return res.json({ programs });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
@@ -23,7 +64,7 @@ const programController = {
     getById: async (req, res) => {
         try {
             const { id } = req.params;
-            const programs = await Program.find({ _id: id }).populate({
+            const program = await Program.findOne({ _id: id }).populate({
                 path: 'weeks',
                 populate: [
                     {
@@ -34,7 +75,43 @@ const programController = {
                 ],
             });
 
-            return res.json({ programs });
+            const favoritePrograms = await FavoriteProgram.find({});
+            const progresses = await Progress.find({});
+            const user = req.user;
+            if (user) {
+                let favorite = favoritePrograms.find(
+                    (item) =>
+                        item.program.equals(program._id) &&
+                        item.user.equals(user._id)
+                );
+                if (favorite) program.liked = true;
+                else program.liked = false;
+
+                let progress = progresses.find(
+                    (item) =>
+                        item.program.equals(program._id) &&
+                        item.user.equals(user._id)
+                );
+                console.log(progress);
+                if (progress) {
+                    program.progress = progress.value;
+                    program.weeks = program.weeks.map((item) => {
+                        let value = progress.weeks.find(
+                            (tmp) => tmp.order == item.order
+                        ).value;
+                        item.progress = value;
+                        return item;
+                    });
+                }
+            }
+
+            let favorites = favoritePrograms.filter((item) =>
+                item.program.equals(program._id)
+            );
+            let count = favorites.length;
+            program.likes = count;
+
+            return res.json({ program });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
         }
