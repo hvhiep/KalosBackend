@@ -1,6 +1,7 @@
 const Program = require('../models/Program');
 const Progress = require('../models/Progress');
 const FavoriteProgram = require('../models/FavoriteProgram');
+const Submit = require('../models/Submit');
 
 const programController = {
     getAll: async (req, res) => {
@@ -77,8 +78,10 @@ const programController = {
 
             const favoritePrograms = await FavoriteProgram.find({});
             const progresses = await Progress.find({});
+            let submits = await Submit.find({});
             const user = req.user;
             if (user) {
+                // LIKED
                 let favorite = favoritePrograms.find(
                     (item) =>
                         item.program.equals(program._id) &&
@@ -87,12 +90,12 @@ const programController = {
                 if (favorite) program.liked = true;
                 else program.liked = false;
 
+                // PROGRESS
                 let progress = progresses.find(
                     (item) =>
                         item.program.equals(program._id) &&
                         item.user.equals(user._id)
                 );
-                console.log(progress);
                 if (progress) {
                     program.progress = progress.value;
                     program.weeks = program.weeks.map((item) => {
@@ -103,6 +106,19 @@ const programController = {
                         return item;
                     });
                 }
+                // COMPLETED WORKOUT
+                submits = submits.filter((item) => item.user.equals(user._id));
+                program.weeks.forEach((week) => {
+                    week.workouts.map((workout) => {
+                        if (
+                            submits.find((submit) =>
+                                submit.workout.equals(workout._id)
+                            ) != undefined
+                        )
+                            workout.completed = true;
+                        else workout.completed = false;
+                    });
+                });
             }
 
             let favorites = favoritePrograms.filter((item) =>
