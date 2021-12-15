@@ -56,9 +56,16 @@ const workoutController = {
                 workout.likes = count;
             });
 
-            const { free } = req.query;
+            const { free, tag } = req.query;
             if (free && free == 1) {
                 workouts = workouts.filter((item) => item.isFree == true);
+            }
+
+            if (tag) {
+                workouts = workouts.filter(
+                    (item) =>
+                        item.tags.find((subItem) => subItem == tag) != undefined
+                );
             }
 
             return res.json({ workouts });
