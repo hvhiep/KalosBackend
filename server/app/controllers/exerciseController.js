@@ -87,7 +87,7 @@ const exerciseController = {
 
             const user = req.user;
             if (user) {
-                let favorite = FavoriteExercise.find(
+                let favorite = favoriteExercises.find(
                     (item) =>
                         item.exercise.equals(exercise._id) &&
                         item.user.equals(user._id)
