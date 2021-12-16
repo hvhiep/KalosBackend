@@ -12,7 +12,7 @@ const programController = {
                     {
                         path: 'workouts',
                         model: 'Workout',
-                        select: 'name',
+                        select: 'name type',
                     },
                 ],
             });
@@ -71,7 +71,7 @@ const programController = {
                     {
                         path: 'workouts',
                         model: 'Workout',
-                        select: 'name',
+                        select: 'name type',
                     },
                 ],
             });
