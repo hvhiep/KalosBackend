@@ -7,10 +7,12 @@ const FavoriteExercise = new Schema(
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            required: true,
         },
         exercise: {
             type: Schema.Types.ObjectId,
             ref: 'Exercise',
+            required: true,
         },
     },
     { timestamps: true, collection: 'FavoriteExercises' }
