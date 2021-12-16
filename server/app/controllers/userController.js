@@ -173,7 +173,7 @@ const userController = {
 
             const { idVideo } = req.body;
             const video = await Video.find({ _id: idVideo });
-            if (!video) res.status(400).json({ msg: 'Video not found' });
+            if (!video) return res.status(400).json({ msg: 'Video not found' });
 
             let favorite = await FavoriteVideo.findOne({
                 user: user._id,
@@ -241,7 +241,8 @@ const userController = {
 
             const { idExercise } = req.body;
             const exercise = await Exercise.find({ _id: idExercise });
-            if (!exercise) res.status(400).json({ msg: 'Exercise not found' });
+            if (!exercise)
+                return res.status(400).json({ msg: 'Exercise not found' });
 
             let favorite = await FavoriteExercise.findOne({
                 user: user._id,
@@ -309,7 +310,8 @@ const userController = {
 
             const { idWorkout } = req.body;
             const workout = await Workout.find({ _id: idWorkout });
-            if (!workout) res.status(400).json({ msg: 'Workout not found' });
+            if (!workout)
+                return res.status(400).json({ msg: 'Workout not found' });
 
             let favorite = await FavoriteWorkout.findOne({
                 user: user._id,
@@ -377,7 +379,8 @@ const userController = {
 
             const { idProgram } = req.body;
             const program = await Program.find({ _id: idProgram });
-            if (!program) res.status(400).json({ msg: 'Program not found' });
+            if (!program)
+                return res.status(400).json({ msg: 'Program not found' });
 
             let favorite = await FavoriteProgram.findOne({
                 user: user._id,

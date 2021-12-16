@@ -7,13 +7,16 @@ const Submit = new Schema(
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            required: true,
         },
         workout: {
             type: Schema.Types.ObjectId,
             ref: 'Workout',
+            required: true,
         },
         duration: {
             type: Number,
+            required: true,
         },
     },
     { timestamps: true, collection: 'Submits' }
