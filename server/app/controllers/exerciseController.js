@@ -60,8 +60,6 @@ const exerciseController = {
                 });
             }
 
-            console.log(favoriteExercises);
-
             exercises.forEach((exercise) => {
                 let favorites = favoriteExercises.filter((item) =>
                     item.exercise.equals(exercise._id)

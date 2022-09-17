@@ -35,7 +35,6 @@ const programController = {
                             item.program.equals(program._id) &&
                             item.user.equals(user._id)
                     );
-                    console.log(progress);
                     if (progress) {
                         program.progress = progress.value;
                         program.weeks = program.weeks.map((item) => {
